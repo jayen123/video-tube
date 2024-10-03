@@ -26,7 +26,6 @@ const loadVideos = async () => {
   }
 };
 
-
 // {
 //     "category_id": "1003",
 //     "video_id": "aaaf",
@@ -50,7 +49,7 @@ const displayVideos = (videos) => {
   const videoContainer = document.getElementById("videos");
   videos.forEach((video) => {
     console.log(video);
-    
+
     const card = document.createElement("div");
     card.classList = "card card-compact shadow-xl";
     card.innerHTML = `
@@ -61,15 +60,21 @@ const displayVideos = (videos) => {
       class="w-full h-full object-cover"
        />
   </figure>
-  <div class="card-body">
-    <h2 class="card-title">${video.title}</h2>
-    <p>${video.description}</p>
-    <div class="card-actions justify-end">
-      <button class="btn btn-primary">Buy Now</button>
+  <div class="flex items-center gap-3">
+    <div class="flex py-5">
+        <img class="w-10 h-10 object-cover rounded-full" src=${video.authors[0].profile_picture} />
+    </div>
+    <div>
+        <h3 class="font-bold">${video.title}</h3>
+        <div class="flex items-center gap-2"> 
+            <p class="text-gray-400">${video.authors[0].profile_name}</p>
+            ${video.authors[0].verified ? (`<img src="assets/verified.png"/>`) : ""}
+            
+        </div>
     </div>
   </div>
     `;
-    videoContainer.appendChild(card)
+    videoContainer.appendChild(card);
   });
 };
 
