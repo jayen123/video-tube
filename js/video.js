@@ -1,11 +1,21 @@
+// getTimeString
 function getTimeString(time) {
   const hour = parseInt(time / 3600);
   let remainingSeconds = time % 3600;
   const minute = parseInt(remainingSeconds / 60);
   remainingSeconds = remainingSeconds % 60;
+
   return `${hour} hour ${minute} minutes ${remainingSeconds} seconds ago`;
 }
-getTimeString(15147);
+
+// removeActiveClass
+const removeActiveClass = () => {
+  const buttons = document.getElementsByClassName("category-btn");
+  for (const button of buttons) {
+    button.classList.remove("btn-error");
+  }
+};
+
 // loadCategories
 const loadCategories = async () => {
   try {
@@ -15,6 +25,23 @@ const loadCategories = async () => {
     const data = await res.json();
 
     displayCategories(data.categories);
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+// loadCategories Videos
+const loadCategoriesVideos = async (id) => {
+  try {
+    const res = await fetch(
+      `https://openapi.programming-hero.com/api/phero-tube/category/${id}`
+    );
+    const data = await res.json();
+    const activeBtn = document.getElementById(`btn-${id}`);
+    removeActiveClass();
+    activeBtn.classList.add("btn-error");
+
+    displayVideos(data.category);
   } catch (error) {
     console.log("Error:", error);
   }
@@ -34,27 +61,20 @@ const loadVideos = async () => {
   }
 };
 
-// {
-//     "category_id": "1003",
-//     "video_id": "aaaf",
-//     "thumbnail": "https://i.ibb.co/5LRQkKF/stick-and-stones.jpg",
-//     "title": "Sticks & Stones",
-//     "authors": [
-//         {
-//             "profile_picture": "https://i.ibb.co/rdTZrCM/dev.jpg",
-//             "profile_name": "Dave Chappelle",
-//             "verified": true
-//         }
-//     ],
-//     "others": {
-//         "views": "113K",
-//         "posted_date": ""
-//     },
-//     "description": "Dave Chappelle's 'Sticks & Stones' has garnered 113K views and remains a controversial yet highly engaging piece of stand-up comedy. Known for his fearless approach, Dave dives into a wide range of topics, delivering his unique perspective with wit and sharp humor. As a verified artist, Dave's comedy is raw, honest, and unapologetically funny."
-// }
-
+// display videos
 const displayVideos = (videos) => {
   const videoContainer = document.getElementById("videos");
+  videoContainer.innerHTML = "";
+  if (videos.length === 0) {
+    videoContainer.classList.remove("grid");
+    videoContainer.innerHTML = `<div class="h-[300px] flex flex-col gap-5 justify-center items-center">
+      <img src="assets/icon.png"/>
+      <p class="text-3xl text-center font-bold">Oops!! Sorry, There is no <br> content here</p>
+    </div>`;
+    return;
+  } else {
+    videoContainer.classList.add("grid");
+  }
   videos.forEach((video) => {
     console.log(video);
 
@@ -94,6 +114,7 @@ const displayVideos = (videos) => {
             }
             
         </div>
+        <span class="text-gray-400">${video.others.views} views </span>
     </div>
   </div>
     `;
@@ -105,10 +126,11 @@ const displayVideos = (videos) => {
 const displayCategories = (categories) => {
   const categoriesContainer = document.getElementById("categories");
   categories.forEach((item) => {
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
-    categoriesContainer.appendChild(button);
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+      <button id="btn-${item.category_id}" onclick="loadCategoriesVideos(${item.category_id})" class="btn category-btn">${item.category}</button>
+    `;
+    categoriesContainer.appendChild(buttonContainer);
   });
 };
 
