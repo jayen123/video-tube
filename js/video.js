@@ -1,3 +1,11 @@
+function getTimeString(time) {
+  const hour = parseInt(time / 3600);
+  let remainingSeconds = time % 3600;
+  const minute = parseInt(remainingSeconds / 60);
+  remainingSeconds = remainingSeconds % 60;
+  return `${hour} hour ${minute} minutes ${remainingSeconds} seconds ago`;
+}
+getTimeString(15147);
 // loadCategories
 const loadCategories = async () => {
   try {
@@ -53,22 +61,37 @@ const displayVideos = (videos) => {
     const card = document.createElement("div");
     card.classList = "card card-compact shadow-xl";
     card.innerHTML = `
-        <figure class="h-[200px]">
+        <figure class="h-[200px] relative">
     <img
       src=${video.thumbnail}
       alt="Shoes"
       class="w-full h-full object-cover"
        />
+       
+        ${
+          video.others.posted_date
+            ? `<span class="absolute right-2 bottom-2 p-1 text-white text-xs bg-black/80 rounded">${getTimeString(
+                video.others.posted_date
+              )}</span>`
+            : ""
+        }
+       
   </figure>
   <div class="flex items-center gap-3">
     <div class="flex py-5">
-        <img class="w-10 h-10 object-cover rounded-full" src=${video.authors[0].profile_picture} />
+        <img class="w-10 h-10 object-cover rounded-full" src=${
+          video.authors[0].profile_picture
+        } />
     </div>
     <div>
         <h3 class="font-bold">${video.title}</h3>
         <div class="flex items-center gap-2"> 
             <p class="text-gray-400">${video.authors[0].profile_name}</p>
-            ${video.authors[0].verified ? (`<img src="assets/verified.png"/>`) : ""}
+            ${
+              video.authors[0].verified
+                ? `<img src="assets/verified.png"/>`
+                : ""
+            }
             
         </div>
     </div>
