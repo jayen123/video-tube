@@ -7,7 +7,29 @@ function getTimeString(time) {
 
   return `${hour} hour ${minute} minutes ${remainingSeconds} seconds ago`;
 }
-
+// load Details data
+const loadDetails = async (videoId) => {
+  try {
+    const res = await fetch(
+      `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
+    );
+    const data = await res.json();
+    displayDetails(data.video);
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+// display details data
+const displayDetails = (videos) => {
+  console.log(videos);
+  const customModal = document.getElementById("customModal").showModal();
+  const detailsContainer = document.getElementById("modalContent");
+  detailsContainer.innerHTML = `
+  <img class="w-full h-auto object-cover" src =${videos.thumbnail}/>
+  <p>${videos.description}</p>
+  `;
+  customModal.appendChild(div);
+};
 // removeActiveClass
 const removeActiveClass = () => {
   const buttons = document.getElementsByClassName("category-btn");
@@ -116,7 +138,10 @@ const displayVideos = (videos) => {
         </div>
         <span class="text-gray-400">${video.others.views} views </span>
     </div>
-  </div>
+    </div>
+    <button onclick="loadDetails('${
+      video.video_id
+    }')" class="btn btn-error text-white">Details</button>
     `;
     videoContainer.appendChild(card);
   });
